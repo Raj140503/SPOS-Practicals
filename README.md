@@ -1,0 +1,1 @@
+## SPPU TE SPOS Practicals
