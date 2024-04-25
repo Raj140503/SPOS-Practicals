@@ -1,0 +1,170 @@
+import java.util.Scanner;
+
+public class roundrobin { int
+Count=0; int[][]
+processData;
+
+int[] CCycle; // Complete Cycle
+int[] PCycle; // Partial Cycle
+int[] TCycle; // Total Cycle
+String[] Queue; boolean[]
+Status; int[] startQue; int[]
+endQue; int RTT = 0;
+Scanner scan = new Scanner(System.in);
+public void scheduleRR(){ int
+TotalProcess = CCycle.length;
+for(int i = 0,j=0;i < Queue.length || j<Queue.length;i++)
+{
+int ProNo = i % TotalProcess;
+if(CCycle[ProNo] != 0){ Queue[j] =
+"process["+ProNo+"]"; if(j==0)
+startQue[j] = 0; else startQue[j] =
+endQue[j-1] + 1; if(!Status[ProNo]){
+processData[ProNo][2] = startQue[j];
+Status[ProNo] = true;
+}
+endQue[j] = startQue[j]+RTT-1;
+j++;
+CCycle[ProNo] = CCycle[ProNo] - 1;
+}else{ if(Status[ProNo]){ Queue[j] =
+"process["+ProNo+"]"; if(j==0) startQue[j]
+= 0; else startQue[j] = endQue[j-1] + 1;
+endQue[j] = startQue[j]+PCycle[ProNo]-1;
+processData[ProNo][3] = endQue[j];
+PCycle[ProNo]=0; j++; Status[ProNo]=
+false; 
+}
+}
+}
+System.out.println("Queue : start : End : Interval : ");
+for (int i = 0; i < Queue.length ; i++){ int temp =
+(endQue[i]-startQue[i]+1); System.out.println(" "+Queue[i]+" "+startQue[i]+" "+endQue[i] +" "+temp ); if(i%Count == Count-1)
+System.out.println("");
+}
+}
+public void setValue(){
+System.out.print("Enter Number Of processes : ");
+Count = scan.nextInt();
+
+System.out.print("Enter Round Trip Time : "); RTT = scan.nextInt(); processData = new int[Count][4];
+CCycle = new int[Count];
+PCycle = new int[Count];
+TCycle = new int[Count];
+for(int i=0;i<Count;i++){
+System.out.print("Processes["+i+"] :-> ");
+processData[i][0] = i;processData[i][1] = scan.nextInt();
+CCycle[i] = processData[i][1]/RTT;
+PCycle[i] =
+processData[i][1]%RTT;
+if(PCycle[i]==0) TCycle[i] =
+CCycle[i]; else
+TCycle[i] = CCycle[i] + 1;
+System.out.println("P["+i+"] CC : "+CCycle[i]+" PC : "+PCycle[i]+" TC :"+TCycle[i]);
+}
+Status = new boolean[Count];
+for(int i=0;i<Count;i++){
+Status[i]= false;
+}
+initQueue();
+}
+public void initQueue(){
+int MaxQueLen = 0;
+for(int i=0;i<TCycle.length;i++){
+MaxQueLen = MaxQueLen + TCycle[i];
+}
+Queue = new String[MaxQueLen];
+startQue = new int[MaxQueLen];
+endQue = new int[MaxQueLen];
+System.out.println("Queue Length : "+MaxQueLen);
+}
+public void DisplayValue(){
+System.out.println("------------------------------------------------------------------------");
+System.out.println("Process Number || Brust Time || Wating Time || Turn Around Time");
+System.out.println("------------------------------------------------------------------------");
+for(int i=0;i<Count;i++){
+System.out.println("Processes["+processData[i]
+
+[0]+"]\t||\t"+processData[i][1]+"\t||\t"+processData[i][2]+"\t||\t"+processData[i][3]);
+}
+System.out.println("-------------------------------------------------------------------------");
+}
+public static void main(String a[]){
+roundrobin rr = new roundrobin();
+rr.setValue();
+System.out.println("\n\n***********Round Robin : (RR) :***********\n");
+System.out.println("\n\nBefore Scheduling\n");
+rr.DisplayValue();rr.scheduleRR(); System.out.println("\n\nAfter Scheduling\n"); 
+rr.DisplayValue();
+}
+}
+
+/*
+OUTPUT
+Enter Number Of processes : 5
+Enter Round Trip Time : 3
+Processes[0] :-> 11
+P[0] CC : 3 PC : 2 TC :4
+Processes[1] :-> 16
+P[1] CC : 5 PC : 1 TC :6
+Processes[2] :-> 13
+P[2] CC : 4 PC : 1 TC :5
+Processes[3] :-> 25
+P[3] CC : 8 PC : 1 TC :9
+Processes[4] :-> 23
+P[4] CC : 7 PC : 2 TC :8
+Queue Length : 32
+***********Round Robin : (RR) :***********
+Before Scheduling
+------------------------------------------------------------------------
+Process Number || Brust Time || Wating Time || Turn
+------------------------------------------------------------------------
+Processes[0] ||11||0||0
+Processes[1] ||16||0||0
+Processes[2] ||13||0||0
+Processes[3] ||25||0||0
+Processes[4] ||23||0||0
+-------------------------------------------------------------------------
+Queue : start : End : Interval :
+process[0] 0 2 3
+process[1] 3 5 3 
+process[2] 6 8 3 
+process[3] 9 11 3 
+Around Timeprocess[4] 12 14 3 
+process[0] 15 17 3 
+process[1] 18 20 3 
+process[2] 21 23 3 
+process[3] 24 26 3 
+process[4] 27 29 3 
+process[0] 30 32 3 
+process[1] 33 35 3 
+process[2] 36 38 3 
+process[3] 39 41 3 
+process[4] 42 44 3 
+process[0] 45 46 2 
+process[1] 47 49 3 
+process[2] 50 52 3 
+process[3] 53 55 3 
+process[4] 56 58 3 
+process[1] 59 61 3 
+process[2] 62 62 1 
+process[3] 63 65 3 
+process[4] 66 68 3 
+process[1] 69 69 1 
+process[3] 70 72 3 
+process[4] 73 75 3 
+process[3] 76 78 3 
+process[4] 79 81 3 
+process[3] 82 84 3 
+process[4] 85 86 2 
+process[3] 87 87 1
+After Scheduling
+------------------------------------------------------------------------
+Process Number || Brust Time || Wating Time || Turn
+------------------------------------------------------------------------
+Processes[0] ||11||0||46
+Processes[1] ||16||3||69
+Processes[2] ||13||6||62
+Around TimeProcesses[3] ||25||9||87
+Processes[4] ||23||12||86
+------------------------------------------------------------------------
+*/
